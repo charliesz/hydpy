@@ -203,6 +203,7 @@ def calc_changeinstorage_v1(self):
         >>> parameterstep('1d')
         >>> nmbgrids(3)
         >>> vegetationclass(WATER, FOREST, IRRCPR)
+        >>> rofactor(.05)
         >>> derived.smax(4.25, 4.25, 4.25)
         >>> states.s.old = 1., 2., 3.
         >>> states.s.new = 5., 6., 7.
@@ -470,6 +471,7 @@ def calc_subbasinevaporation_v1(self):
     flu = self.sequences.fluxes.fastaccess
     con = self.parameters.control.fastaccess
 
+    flu.esub = 0.
     for k in range(con.nmbgrids):
         flu.esub += flu.egrid[k] * con.area[k]
 
@@ -509,7 +511,7 @@ def calc_openwaterbalance_v1(self):
         >>> vegetationclass(RADRYTROP, WATER, RAHIGHL)
         >>> model.calc_openwaterbalance_v1()
         >>> fluxes.roh
-        roh(0.0, 0.0, 0.0)
+        roh(nan, 0.0, nan)
 
     Calculating for: BOW >= 0.
 
@@ -517,7 +519,7 @@ def calc_openwaterbalance_v1(self):
         >>> fluxes.eow = 3.
         >>> model.calc_openwaterbalance_v1()
         >>> fluxes.roh
-        roh(0.0, 2.0, 0.0)
+        roh(nan, 2.0, nan)
     """
 
     con = self.parameters.control.fastaccess
@@ -602,6 +604,7 @@ def calc_subbasinprecipitation_v1(self):
     con = self.parameters.control.fastaccess
     flu = self.sequences.fluxes.fastaccess
 
+    flu.psub = 0.
     for k in range(con.nmbgrids):
         flu.psub += inp.p[k] * con.area[k]
 
@@ -715,6 +718,7 @@ def calc_outflow_v1(self):
     Examples:
         >>> from hydpy.models.globwat import *
         >>> parameterstep('1d')
+        >>> f(.3)
         >>> states.ssb(20.)
         >>> model.calc_outflow_v1()
         >>> states.qout
@@ -792,6 +796,8 @@ class Model(modeltools.Model):
         >>> kc.water = 1.1
         >>> kc.irrcpr = 1.
         >>> kc.radrytrop = .9
+        >>> rofactor(.05)
+        >>> f(.3)
 
         Update the values of all derived parameters:
 
